@@ -1,25 +1,298 @@
 <!DOCTYPE html>
-<html ng-app="app">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
-		<meta name="format-detection" content="telephone=no">
-		<link rel="stylesheet" href="css/reset.css">
-		<style type="text/css">
-			
-		</style>
-	</head>
-	<body>
-		
-		<script src="lib/zepto.min.js"></script>
-		<script>
-			window.jQuery = $;
-		</script>
-		<script src="js/jquery.base64.js"></script>
-		<script src="js/jquery.jsonp.js"></script>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="css/reset.css">
+<style type="text/css">
 
-		<script>
-			
-		</script>
-	</body>
+
+html,body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+.top-nav {
+	position: fixed;
+	top: 0;
+	height: 50px;
+	width: 100%;
+	z-index: 9999;
+	background: #000;
+}
+.top-nav .icon-back {
+	position: absolute;
+	top: 14px;
+	left: 10px;
+	width: 23px;
+	height: 23px;
+	background: url(img/icon-back.png);
+	background-size: contain;
+}
+.nav-title {
+	position: absolute;
+	top: 16px;
+	left: 42px;
+	color: #d5d5d6;
+}
+.bottom-nav {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	height: 70px;
+	z-index: 999;
+	background: #000;
+	opacity: 0.9;
+}
+.bottom-nav a {
+	display: block;
+	width: 25%;
+	height: 70px;
+	font-size: 10px;
+	line-height: 21px;
+	color: #fff;
+	float: left;
+	text-align: center;
+}
+.bottom-nav a {
+	display: block;
+	width: 25%;
+	height: 70px;
+	font-size: 10px;
+	line-height: 21px;
+	color: #fff;
+	float: left;
+	text-align: center;
+}
+.bottom-nav a::before {
+	content: '';
+	display: block;
+	margin: 18px auto 0;
+}
+.bottom-nav .bottom-nav-menu::before {
+	margin-bottom: 9px;
+	width: 18px;
+	height: 13px;
+	background: url(img/icon-menu.png) no-repeat;
+	background-size: 18px 13px;
+}
+.bottom-nav .bottom-nav-menu::after {
+	content: '目录';
+}
+.bottom-nav .bottom-nav-font::before {
+	margin-bottom: 9px;
+	width: 20px;
+	height: 13px;
+	background: url(img/icon-font.png) no-repeat;
+	background-size: 20px 13px;
+}
+.bottom-nav .bottom-nav-font::after {
+	content: '字体';
+}
+.bottom-nav .bottom-nav-night::before {
+	margin-bottom: 6px;
+	width: 16px;
+	height: 16px;
+	background: url(img/icon-night.png) no-repeat;
+	background-size: 16px 16px;
+}
+.bottom-nav .bottom-nav-night::after {
+	content: '夜间';
+}
+.bottom-nav .bottom-nav-download::before {
+	margin-bottom: 5px;
+	width: 22px;
+	height: 17px;
+	background: url(img/icon-download.png) no-repeat;
+	background-size: 22px 17px;
+}
+.bottom-nav .bottom-nav-download::after {
+	content: '下载';
+}
+.m-read-content {
+	font-size: 14px;
+	color: #555;
+	line-height: 31px;
+	padding: 15px;
+}
+.m-read-content h4 {
+	font-size: 20px;
+	color: #736357;
+	border-bottom: 1px solid #736357;
+	letter-spacing: 2px;
+	margin: 0 0 1em 0;
+}
+.m-read-content p {
+	text-indent: 2em;
+	margin: 0.5em 0;
+	/* letter-spacing: 0px; */
+	line-height: 24px;
+}
+.m-button-bar {
+	width: 70%;
+	max-width: 800px;
+	padding: 5px;
+	margin: 0 auto;
+}
+.m-button-bar .u-tab {
+	height: 34px;
+	margin: 10px auto;
+	line-height: 34px;
+	border-radius: 8px;
+	border: 1px solid #858382;
+	font-size: 12px;
+	background: #000;
+	opacity: 0.9;
+}
+.m-button-bar .u-tab li {
+	display: inline-block;
+	width: 49%;
+	border-right: 1px solid #858382;
+	text-align: center;
+	color: #fff;
+}
+.m-button-bar .u-tab li:nth-child(2) {
+	border-right: none;
+}
+.nav-pannel {
+	position: fixed;
+	bottom: 70px;
+	height: 135px;
+	width: 100%;
+	background: none;
+	color: #fff;
+	z-index: 10003;
+	background: #000;
+	opacity: 0.9;
+}
+.nav-pannel .child-mod {
+	padding: 5px 10px;
+	margin: 15px;
+}
+.nav-pannel .child-mod span {
+	display: inline-block;
+	padding-right: 20px;
+	padding-left: 10px;
+}
+.child-mod button:nth-child(2) {
+	margin-right: 10px;
+}
+.nav-pannel .child-mod .font-size-button {
+	background: none;
+	border: 1px #8c8c8c solid;
+	color: #fff;
+	border-radius: 16px;
+	padding: 5px 40px;
+	outline: none;
+}
+.bk-container {
+	position: relative;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.bk-container .bk-container-current {
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px #ff7800 solid;
+	display: inline-block;
+}
+.bk-container-bg1 {
+    background-color: #e9dfc7;
+}
+
+.bk-container-bg2 {
+    background-color: #fff;
+}
+
+.bk-container-bg3 {
+    background-color: #a4a4a4;
+}
+
+.bk-container-bg4 {
+    background-color: #cdefce;
+}
+
+.bk-container-bg5 {
+    background-color: #283548;
+}
+
+	
+</style>
+</head>
+<body>
+	
+<div id="root" class="container">
+	<!-- 顶部通栏 -->
+	<div id="top-nav" class="top-nav">
+        <div class="icon-back"></div>
+        <div class="nav-title">返回书架</div>
+    </div>
+    <!-- 文章内容 -->
+    <div id="fiction_container" class="m-read-content">
+    	<h4>传闻有误</h4>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
+    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p> 
+
+    </div>
+    <!-- 章节按钮 -->
+    <div class="m-button-bar">
+        <ul class="u-tab">
+            <li id="prev_button">上一章</li>
+            <li id="next_button">下一章</li>
+        </ul>
+    </div>
+    <!-- 字体，背景设置框 -->
+    <div class="nav-pannel font-container" style="">   	
+        <div class="child-mod">
+            <span>字号</span>
+            <button id="large-font" class="font-size-button">大</button>
+            <button id="samll-font" class="font-size-button">小</button>
+        </div>
+        <div class="child-mod">
+            <span>背景</span>
+            <div class="bk-container bk-container-bg1">
+                <div class="bk-container-current"></div>
+            </div>
+            <div class="bk-container bk-container-bg2"></div>
+            <div class="bk-container bk-container-bg3"></div>
+            <div class="bk-container bk-container-bg4"></div>
+            <div class="bk-container bk-container-bg5"></div>
+        </div>
+    </div>
+    <!-- 底边栏 -->
+    <div id="bottom-nav" class="bottom-nav" style="">
+        <a href="javascript:void(0);" class="bottom-nav-menu"></a>
+        <a href="javascript:void(0);" class="bottom-nav-font" id="font-button"></a>
+        <a href="javascript:void(0);" class="bottom-nav-night" id="night-button"></a>
+        <a href="javascript:void(0);" class="bottom-nav-day" id="day-button" style="display: none;"></a>
+        <a href="javascript:void(0);" class="bottom-nav-download"></a>
+    </div>
+
+</div>
+
+<script src="lib/zepto.min.js"></script>
+<script>
+	window.jQuery = $;
+</script>
+<script src="js/jquery.base64.js"></script>
+<script src="js/jquery.jsonp.js"></script>
+
+<script>
+	
+</script>
+</body>
 </html>
