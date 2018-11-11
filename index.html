@@ -256,7 +256,7 @@ html,body {
         </ul>
     </div>
     <!-- 字体，背景设置框 -->
-    <div class="nav-pannel font-container" style="">   	
+    <div class="nav-pannel font-container" style="display: none">   	
         <div class="child-mod">
             <span>字号</span>
             <button id="large-font" class="font-size-button">大</button>
@@ -292,7 +292,35 @@ html,body {
 <script src="js/jquery.jsonp.js"></script>
 
 <script>
-	
+	(function(){
+		var util = (function(){
+			var prefix = 'html5_reader_';
+			var storageGetter = function(key){
+				return localStorage.getItem(prefix + key);
+			}
+			var storageSetter = function(key,value){
+				return localStorage.setItem(prefix + key,value);
+			}
+			return {
+				storageGetter:storageGetter,
+				storageSetter:storageSetter
+			}
+		})();
+
+		function main() {
+		// 整个项目的入口函数
+		}
+		function readerModel() {
+		//实现和阅读器相关数据交互方法
+		};
+		function readerBaseFrame() {
+		// 渲染基本的UI结构
+		}
+		function eventHanlder() {
+		// 交互的事件绑定
+		}
+		main();
+	})();
 </script>
 </body>
 </html>
