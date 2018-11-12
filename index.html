@@ -8,9 +8,8 @@
 <style type="text/css">
 
 
-html,body {
+html {
     width: 100%;
-    height: 100%;
     overflow-x: hidden;
 }
 .top-nav {
@@ -224,6 +223,13 @@ html,body {
 .bk-container-bg5 {
     background-color: #283548;
 }
+.artical-action-mid {
+	position: fixed;
+	z-index: 10001;
+	width: 100%;
+	height: 40%;
+	top: 30%;
+}
 
 	
 </style>
@@ -231,8 +237,12 @@ html,body {
 <body>
 	
 <div id="root" class="container">
+	<!-- trigger区域 -->
+	<div class="m-artical-action">
+        <div id="action_mid" class="artical-action-mid"></div>
+    </div>
 	<!-- 顶部通栏 -->
-	<div id="top-nav" class="top-nav">
+	<div id="top-nav" class="top-nav" style="display: none">
         <div class="icon-back"></div>
         <div class="nav-title">返回书架</div>
     </div>
@@ -274,7 +284,7 @@ html,body {
         </div>
     </div>
     <!-- 底边栏 -->
-    <div id="bottom-nav" class="bottom-nav" style="">
+    <div id="bottom-nav" class="bottom-nav"  style="display: none">
         <a href="javascript:void(0);" class="bottom-nav-menu"></a>
         <a href="javascript:void(0);" class="bottom-nav-font" id="font-button"></a>
         <a href="javascript:void(0);" class="bottom-nav-night" id="night-button"></a>
@@ -306,18 +316,45 @@ html,body {
 				storageSetter:storageSetter
 			}
 		})();
+		var Dom = {
+            top_nav: $('#top-nav'),
+            bottom_nav: $('#bottom-nav'),
+            // font_container: $('.font-container'),
+            // font_button: $('#font-button')
+        };
+        var Win = $(window);
+        var Doc = $(document);
+        // var RootContainer = $('#fiction_container');
 
 		function main() {
-		// 整个项目的入口函数
+			// 整个项目的入口函数
+			eventHanlder();
+
 		}
 		function readerModel() {
-		//实现和阅读器相关数据交互方法
-		};
+			//实现和阅读器相关数据交互方法
+		}
 		function readerBaseFrame() {
 		// 渲染基本的UI结构
 		}
 		function eventHanlder() {
-		// 交互的事件绑定
+			// 交互的事件绑定
+
+			// 点击中心区域显示上下栏
+			$('#action_mid').click(function() {
+				Dom.bottom_nav.toggle();
+                Dom.top_nav.toggle();
+			});
+			// 滚动时上下栏隐藏
+            Win.scroll(function() {
+            	// alert('ff');
+                Dom.top_nav.hide();
+                Dom.bottom_nav.hide();
+                // Dom.font_container.hide();
+                // Dom.font_button.removeClass('current');
+            });
+
+
 		}
 		main();
 	})();
