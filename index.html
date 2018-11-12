@@ -262,14 +262,7 @@ body{
     </div>
     <!-- 文章内容 -->
     <div id="fiction_container" class="m-read-content">
-    	<h4>传闻有误</h4>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p>
-    	<p>江暖心方才一直站在一树梅花之后，他只见那女子身姿修长，腰肢宛如柳枝柔韧，长及膝下的墨发如云堆雪，当她款款从梅林深处走来，那一刹那，他仿佛看到了一个以冰做骨，以雪凝肤，以傲雪寒梅为神的花中精灵。</p> 
+    	
 
     </div>
     <!-- 章节按钮 -->
@@ -315,18 +308,40 @@ body{
 <script src="js/jquery.jsonp.js"></script>
 
 <script>
+	// function yyy(data){
+	// 	console.log(data.title.$t);
+	// }
+	// var doo = $('<script><\/script>');
+	// doo.attr('src','https://api.douban.com/book/subjects?q=javascript&callback=yyy&alt=xd')
+	// $('body').append(doo);
+
 	(function(){
 		var Util = (function(){
 			var prefix = 'html5_reader_';
 			var storageGetter = function(key){
 				return localStorage.getItem(prefix + key);
-			}
+			};
 			var storageSetter = function(key,value){
 				return localStorage.setItem(prefix + key,value);
-			}
+			};
+			var getJSONP = function(url, callback) {
+                return $.jsonp({
+                    url: url,
+                    cache: true,
+                    callback: 'duokan_fiction_chapter',
+                    success: function(result) {
+                        var data = $.base64.decode(result);
+                        // 可以不使用jquery插件，写成var data = window.atob(result);
+                        // 参考https://developer.mozilla.org/zh-CN/docs/Web/API/WindowBase64/btoa
+                        var json = decodeURIComponent(escape(data));
+                        callback(json);
+                    }
+                });
+            };
 			return {
 				storageGetter:storageGetter,
-				storageSetter:storageSetter
+				storageSetter:storageSetter,
+				getJSONP:getJSONP
 			}
 		})();
 		var Dom = {
@@ -338,20 +353,130 @@ body{
         var Win = $(window);
         var Doc = $(document);
         var RootContainer = $('#fiction_container');
-
+        // 项目入口
+        var readerModel;
+        var readerUI;
 		function main() {
-			// 整个项目的入口函数
-			eventHanlder();
+			readerModel = readerModel();
+			readerUI = readerBaseFrame(RootContainer);
+			readerModel.init(function(data) {
+                readerUI(data);
+            });
 
+			eventHanlder();
 		}
+		//阅读器相关数据交互
 		function readerModel() {
-			//实现和阅读器相关数据交互方法
+			var Chapter_id;
+            var ChapterTotal;
+            
+            var init = function(UIcallback) {
+            	getFictionInfoPromise()
+            	.then(function() {
+            		return getCurChapterContentPromise();
+            	})
+            	.then(function(data) {
+            		UIcallback && UIcallback(data);
+            	});
+
+			};
+			// 获得对应章节信息
+			var getCurChapterContentPromise = function() {
+		    	return new Promise(function(resolve, reject) {
+		        	$.get('data/data' + Chapter_id + '.json', function(data) {
+		        	    if (data.result === 0) {
+		        	        var url = data.jsonp;
+		        	        Util.getJSONP(url, function(data) {
+		        	            resolve(data);
+		        	        });
+		        	    } else {
+		        	    	reject({msg: 'fail'});
+		        	    }
+		        	}, 'json');
+		        });
+		    };
+		    var getCurChapterContent = function(chapter_id, callback) {
+                $.get('data/data' + chapter_id + '.json', function(data) {
+                    if (data.result === 0) {
+                        var url = data.jsonp;
+                        Util.getJSONP(url, function(data) {
+                            callback && callback(data);
+                        });
+                    }
+                }, 'json');
+            };
+		    // 获得全部章节信息
+		    var getFictionInfoPromise = function() {
+            	return new Promise(function(resolve, reject) {
+	            	$.get('data/chapter.json', function(data) {
+	            		// 获得章节信息之后的回调
+	            	    if(data.result === 0) {
+	            	    	Chapter_id = Util.storageGetter('last_chapter_id');
+	            	    	if (Chapter_id == null) {
+	            	    	    Chapter_id = data.chapters[1].chapter_id;
+	            	    	}
+	            	    	ChapterTotal = data.chapters.length;
+	            	    	resolve(Chapter_id);
+	            	    } else {
+	            	    	reject({msg: 'fail'});
+	            	    }
+	            	}, 'json');
+	            });
+            };
+            var prevChapter = function(UIcallback) {
+                Chapter_id = parseInt(Chapter_id, 10);
+                if (Chapter_id === 1) {
+                    return;
+                }
+                Chapter_id -= 1;
+                getCurChapterContent(Chapter_id, UIcallback);
+                Util.storageSetter('last_chapter_id', Chapter_id);
+            };
+            var nextChapter = function(UIcallback) {
+                Chapter_id = parseInt(Chapter_id, 10);
+                if (Chapter_id === 4) {
+                    return;
+                }
+                Chapter_id += 1;
+                getCurChapterContent(Chapter_id, UIcallback);
+                Util.storageSetter('last_chapter_id', Chapter_id);
+            };
+            return {
+                init: init,
+                prevChapter: prevChapter,
+                nextChapter: nextChapter
+            }
+			
 		}
-		function readerBaseFrame() {
 		// 渲染基本的UI结构
+		function readerBaseFrame(container) {
+			function parseChapterData(jsonData) {
+                var jsonObj = JSON.parse(jsonData);
+                var html = '<h4>' + jsonObj.t + '</h4>';
+                for (var i = 0; i < jsonObj.p.length; i++) {
+                    html += '<p>' + jsonObj.p[i] + '</p>';
+                }
+                return html;
+            }
+            return function(data) {
+            	Win.scrollTop(0);
+                container.html(parseChapterData(data));
+            }
 		}
+		// 交互的事件绑定
 		function eventHanlder() {
-			// 交互的事件绑定
+			//上下章节
+			$('#prev_button').click(function() {
+                readerModel.prevChapter(function(data) {
+                    readerUI(data);
+                });
+            });
+            $('#next_button').click(function() {
+                readerModel.nextChapter(function(data) {
+                    readerUI(data);
+                });
+            });
+			
 
 			// 点击中心区域显示上下栏
 			$('#action_mid').click(function() {
@@ -418,12 +543,9 @@ body{
                 $(this).hide();
                 $('#night-button').show();
             });
-
-
-
-
 		}
 		main();
+		
 	})();
 </script>
 </body>
