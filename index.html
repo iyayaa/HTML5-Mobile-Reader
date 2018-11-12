@@ -12,6 +12,10 @@ html {
     width: 100%;
     overflow-x: hidden;
 }
+body{
+	/* 取消iOS的Safari浏览器中的链接或JavaScript的可点击的元素时覆盖显示的高亮颜色 */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
 .top-nav {
 	position: fixed;
 	top: 0;
@@ -88,6 +92,10 @@ html {
 }
 .bottom-nav .bottom-nav-font::after {
 	content: '字体';
+}
+.current:before {
+	background: url(img/icon-font-active.png) no-repeat !important;
+    background-size: 20px 13px !important;
 }
 .bottom-nav .bottom-nav-night::before {
 	margin-bottom: 6px;
@@ -193,16 +201,12 @@ html {
 	display: inline-block;
 	vertical-align: middle;
 	margin-right: 5px;
+	border: 1px transparent solid;
 }
-.bk-container .bk-container-current {
-	position: absolute;
-	top: -2px;
-	left: -2px;
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
+
+.bk-container.active{
 	border: 1px #ff7800 solid;
-	display: inline-block;
+
 }
 .bk-container-bg1 {
     background-color: #e9dfc7;
@@ -229,6 +233,16 @@ html {
 	width: 100%;
 	height: 40%;
 	top: 30%;
+}
+.bottom-nav .bottom-nav-day:before {
+    margin-bottom: 4px;
+    width: 19px;
+    height: 18px;
+    background: url(img/icon-day.png) no-repeat;
+    background-size: 19px 18px;
+}
+.bottom-nav .bottom-nav-day:after {
+    content: '日间';
 }
 
 	
@@ -274,8 +288,7 @@ html {
         </div>
         <div class="child-mod">
             <span>背景</span>
-            <div class="bk-container bk-container-bg1">
-                <div class="bk-container-current"></div>
+            <div class="bk-container bk-container-bg1 active">
             </div>
             <div class="bk-container bk-container-bg2"></div>
             <div class="bk-container bk-container-bg3"></div>
@@ -303,7 +316,7 @@ html {
 
 <script>
 	(function(){
-		var util = (function(){
+		var Util = (function(){
 			var prefix = 'html5_reader_';
 			var storageGetter = function(key){
 				return localStorage.getItem(prefix + key);
@@ -319,12 +332,12 @@ html {
 		var Dom = {
             top_nav: $('#top-nav'),
             bottom_nav: $('#bottom-nav'),
-            // font_container: $('.font-container'),
-            // font_button: $('#font-button')
+            font_container: $('.font-container'),
+            font_button: $('#font-button')
         };
         var Win = $(window);
         var Doc = $(document);
-        // var RootContainer = $('#fiction_container');
+        var RootContainer = $('#fiction_container');
 
 		function main() {
 			// 整个项目的入口函数
@@ -344,15 +357,69 @@ html {
 			$('#action_mid').click(function() {
 				Dom.bottom_nav.toggle();
                 Dom.top_nav.toggle();
+                Dom.font_container.hide();
+                Dom.font_button.removeClass('current');
 			});
 			// 滚动时上下栏隐藏
             Win.scroll(function() {
-            	// alert('ff');
                 Dom.top_nav.hide();
                 Dom.bottom_nav.hide();
-                // Dom.font_container.hide();
-                // Dom.font_button.removeClass('current');
+                Dom.font_container.hide();
+                Dom.font_button.removeClass('current');
             });
+            // 唤醒字体面板
+            Dom.font_button.click(function(){
+                Dom.font_container.toggle();
+                Dom.font_button.toggleClass('current');
+            });
+            // 设置字号
+            var initFont =parseInt(Util.storageGetter('font_size'));
+            if(!initFont)
+            	initFont =14;
+            RootContainer.css('font-size', initFont);
+
+            $('#large-font').click(function() {
+            	if (initFont >= 20) {
+                    return;
+                }
+                initFont += 1;
+                RootContainer.css('font-size', initFont);
+                Util.storageSetter('font_size', initFont);
+			});
+			$('#samll-font').click(function() {
+				if (initFont <= 12) {
+                    return;
+                }
+                initFont -= 1;
+                RootContainer.css('font-size', initFont);
+                Util.storageSetter('font_size', initFont);
+			});
+
+			// 背景颜色
+			var bg = Util.storageGetter('bg');
+			if(!bg)
+				bg = '#e9dfc7';
+			$('body').css('background-color', bg);
+			$('.bk-container').click(function() {
+				$(this).addClass('active').siblings().removeClass('active');
+				bg = $(this).css('background-color');
+				$('body').css('background-color', bg);
+				Util.storageSetter('bg',bg);
+			});
+
+			// 切换夜间模式
+			$('#night-button').click(function() {
+                $('body').css('background-color', '#0f1410');
+                $(this).hide();
+                $('#day-button').show();
+            });
+            $('#day-button').click(function() {
+                $('body').css('background-color', bg);
+                $(this).hide();
+                $('#night-button').show();
+            });
+
+
 
 
 		}
